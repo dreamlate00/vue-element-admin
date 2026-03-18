@@ -1,4 +1,4 @@
-import store from '@store';
+import store from '@/store';
 let apis = store.state.permission.routeApis;
 
 // const haveApiRight = (pathName, apiUrl) => {

@@ -1,104 +1,150 @@
 <template>
   <div class="dashboard-container">
-    <el-row :gutter="20">
-      <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>用户统计</span>
-          </div>
-          <div class="text item">
-            总用户数: 1,234
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>订单统计</span>
-          </div>
-          <div class="text item">
-            今日订单: 56
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>收入统计</span>
-          </div>
-          <div class="text item">
-            今日收入: ¥12,345
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>系统状态</span>
-          </div>
-          <div class="text item">
-            运行时间: 15天
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="20" style="margin-top: 20px;">
-      <el-col :span="12">
-        <el-card>
-          <div slot="header">
-            <span>访问量统计</span>
-          </div>
-          <div style="height: 300px;">
-            <p>图表区域</p>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card>
-          <div slot="header">
-            <span>用户活跃度</span>
-          </div>
-          <div style="height: 300px;">
-            <p>图表区域</p>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <div class="chart-container" ref="line"></div>
+    <div class="chart-container" style="margin-right:0" ref="myEchart"></div>
   </div>
 </template>
-
 <script>
-export default {
-  name: 'Dashboard'
-}
+  import echarts from 'echarts';
+  import { registerGuangdongMap } from '@/utils/map-register';
+
+  export default {
+    name: 'index',
+    data() {
+      return {
+        chart: null,
+        citys: ['广州市', '佛山市', '清远市', '东莞市', '惠州市', '江门市', '韶关市', '河源市', '梅州市', '揭阳市', '潮州市', '汕头市', '汕尾市', '深圳市',
+          '中山市', '珠海市', '肇庆市', '云浮市', '湛江市', '茂名市', '阳江市'
+        ]
+      };
+    },
+    computed: {
+      data() {
+        var data = [];
+        this.citys.forEach(e => {
+          data.push({
+            name: e,
+            value: parseInt((Math.random() * 1000))
+          });
+        });
+
+        data.sort((val1, val2) => {
+          return val1.value - val2.value;
+        });
+        return data;
+      }
+    },
+    mounted() {
+      // 1. 先注册地图
+      registerGuangdongMap();
+
+      this.chinaConfigure();
+      this.lineConfig();
+      console.log(2);
+      window.onresize = () => {
+        console.log(1);
+        this.chinaConfigure();
+        this.lineConfig();
+      };
+    },
+    beforeDestroy() {
+      if (!this.chart) {
+        return;
+      }
+      this.chart.dispose();
+      this.chart = null;
+    },
+    created() {},
+    methods: {
+      lineConfig() {
+        let lineChart = echarts.init(this.$refs.line); // 这里是为了获得容器所在位置
+        window.onresize = lineChart.resize;
+        lineChart.setOption({ // 进行相关配置
+          // backgroundColor: '#ffffff',
+          tooltip: {}, // 鼠标移到图里面的浮动提示框
+          title: {},
+          series: [{
+            name: '警报次数', // 浮动框的标题
+            type: 'pie',
+            radius: [30, 110],
+            center: ['50%', '50%'],
+            roseType: 'area',
+            data: this.data
+          }]
+        });
+      },
+      chinaConfigure() {
+        let myChart = echarts.init(this.$refs.myEchart); // 这里是为了获得容器所在位置
+        window.onresize = myChart.resize;
+        myChart.setOption({ // 进行相关配置
+          // backgroundColor: '#ffffff',
+          tooltip: {}, // 鼠标移到图里面的浮动提示框
+          dataRange: {
+            show: false,
+            min: 0,
+            max: 1000,
+            text: ['High', 'Low'],
+            realtime: true,
+            calculable: true,
+            color: ['orangered', 'yellow', 'lightskyblue']
+          },
+          geo: { // 这个是重点配置区
+            map: '广东', // 表示中国地图
+            roam: false, // 缩放
+            label: {
+              normal: {
+                show: false, // 是否显示对应地名
+                textStyle: {
+                  color: 'rgba(0,0,0,0.4)'
+                }
+              }
+            },
+            itemStyle: {
+              normal: {
+                borderColor: 'rgba(255, 0, 0, 0.2)'
+              },
+              emphasis: {
+                areaColor: null,
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                shadowBlur: 20,
+                borderWidth: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          },
+          series: [{
+              type: 'scatter',
+              coordinateSystem: 'geo', // 对应上方配置
+              center: ['50%', '50%']
+            },
+            {
+              name: '警报次数', // 浮动框的标题
+              type: 'map',
+              geoIndex: 0,
+              data: this.data
+            }
+          ]
+        });
+      }
+    }
+  };
+
 </script>
 
-<style lang="less" scoped>
-.dashboard-container {
-  padding: 20px;
-  background-color: #f0f2f5;
-  min-height: calc(100vh - 84px);
-}
+<style scoped lang="less">
+  .dashboard-container {
+    display: flex;
+    justify-content: space-between;
+  }
 
-.box-card {
-  margin-bottom: 20px;
-}
+  .chart-container {
+    height: 400px;
+    width: 50%;
+    background: #fff;
+    border-radius: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
 
-.text {
-  font-size: 14px;
-}
-
-.item {
-  margin-bottom: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-.clearfix:after {
-  clear: both
-}
 </style>

@@ -1,72 +1,69 @@
-import Layout from '@src/pages/layout/index';
-import { AFFIX_ROUTES, APPEND_ROUTES, genComponent } from '@src/router';
+import { asyncRoutes, constantRoutes } from '@/router'
+
+/**
+ * Use meta.role to determine if the current user has permission
+ * @param roles
+ * @param route
+ */
+function hasPermission(roles, route) {
+  if (route.meta && route.meta.roles) {
+    return roles.some(role => route.meta.roles.includes(role))
+  } else {
+    return true
+  }
+}
 
 /**
  * Filter asynchronous routing tables by recursion
  * @param routes asyncRoutes
  * @param roles
  */
-export function filterAsyncRoutes(routes) {
-  const res = [];
+export function filterAsyncRoutes(routes, roles) {
+  const res = []
 
-  // 解析菜单
-  // 没有子级，也没有配置权限的菜单都不加载
   routes.forEach(route => {
-    const tmp = { ...route };
-    if (tmp.children) {
-      tmp.children = filterAsyncRoutes(tmp.children);
-    }
-    if (typeof tmp.component === 'string') {
-      if (tmp.component === 'layout') {
-        tmp.component = Layout;
-      } else {
-        tmp.component = genComponent(tmp.component);
+    const tmp = { ...route }
+    if (hasPermission(roles, tmp)) {
+      if (tmp.children) {
+        tmp.children = filterAsyncRoutes(tmp.children, roles)
       }
+      res.push(tmp)
     }
+  })
 
-    res.push(tmp);
-  });
-
-  return res;
-}
-
-function genRouteApis(list) {
-  for (let i in list) {
-    var data = list[i];
-    if (data.children) {
-      genRouteApis(data.children);
-    }
-    state.routeApis[data.name] = data.apis || [];
-  }
+  return res
 }
 
 const state = {
   routes: [],
-  addRoutes: [],
-  routeApis: {}
-};
+  addRoutes: []
+}
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
-    state.addRoutes = routes;
-    state.routes = AFFIX_ROUTES.concat(routes).concat(APPEND_ROUTES);
+    state.addRoutes = routes
+    state.routes = constantRoutes.concat(routes)
   }
-};
+}
 
 const actions = {
-  generateRoutes({ commit }, routes) {
+  generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
-      let accessedRoutes = filterAsyncRoutes(AFFIX_ROUTES.concat(routes).concat(APPEND_ROUTES));
-      commit('SET_ROUTES', routes);
-      genRouteApis(accessedRoutes);
-      resolve(accessedRoutes);
-    });
+      let accessedRoutes
+      if (roles.includes('admin')) {
+        accessedRoutes = asyncRoutes || []
+      } else {
+        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      }
+      commit('SET_ROUTES', accessedRoutes)
+      resolve(accessedRoutes)
+    })
   }
-};
+}
 
 export default {
   namespaced: true,
   state,
   mutations,
   actions
-};
+}

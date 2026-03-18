@@ -4,9 +4,9 @@ import getters from './getters';
 
 Vue.use(Vuex);
 
-// import app from './modules/app';
-// import user from './modules/user';
-// import permission from './modules/permission';  
+import app from './modules/app';
+import user from './modules/user';
+import permission from './modules/permission';  
 import requestCode from './modules/requestCode';
 import tagsView from './modules/tagsView';
 
@@ -24,7 +24,7 @@ import tagsView from './modules/tagsView';
 //   return modules;
 // }, {});
 
-const modules = {requestCode, tagsView}
+const modules = {app,requestCode, tagsView, user,permission}
 
 const store = new Vuex.Store({
   modules,
