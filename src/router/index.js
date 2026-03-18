@@ -1,124 +1,44 @@
-import Layout from '@src/pages/layout/index';
-import Vue from 'vue';
-import Router from 'vue-router'; // 获取组件的方法
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Layout from '@/layout/index.vue'
 
-const _import = require('@src/router/_import_' + process.env.NODE_ENV);
-// var pathPre = config.pathPre;
+Vue.use(VueRouter)
 
-const routerPush = Router.prototype.push;
-Router.prototype.push = function push(location) {
-  //   if (typeof location === 'string') {
-  //     location = pathPre + location;
-  //   } else if (location.url) {
-  //     location.url = pathPre + location.url;
-  //   }
-  return routerPush.call(this, location).catch(error => error);
-};
-
-Vue.use(Router);
-
-var initRoutes = [{
-  path: '/login',
-  component: _import('login'),
-  name: 'login',
-  meta: {
-    title: 'NotFound',
-    noCache: true,
-    noTag: true
-  },
-  hidden: true
-}, {
-  path: '*',
-  component: Layout,
-  meta: {
-    affix: true,
-    icon: 'el-icon-s-home',
-    title: '首页'
-  }
-}];
-
-var affixRoutes = [{
-  path: '/login',
-  component: _import('login'),
-  name: 'login',
-  meta: {
-    title: 'NotFound',
-    noCache: true,
-    noTag: true
-  },
-  hidden: true
-}, {
-  path: '/',
-  component: Layout,
-  meta: {
-    affix: true,
-    icon: 'el-icon-s-home',
-    title: '首页'
-  },
-  name: 'layout',
-  children: [{
-    path: '/',
-    component: _import('index/dashboard'),
-    name: 'index',
-    meta: {
-      affix: true,
-      title: '首页',
-      icon: 'el-icon-s-home'
-    },
-    apis: ['*']
-  }],
-  hidden: true
-}];
-
-// 匹配不到路由进入默认页面
-var appendRoutes = [
+const routes = [
   {
-    path: '/auth',
-    component: _import('layout/index'),
-    hidden: true,
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
     children: [
       {
-        path: '/forbbiden',
-        name: 'forbbiden',
-        component: _import('403'),
-        meta: {
-          title: 'Forbidden',
-          noCache: true,
-          noTag: true
-        },
-        hidden: true,
-        apis: ['*']
-      }, {
-        path: '/*',
-        name: 'notfound',
-        component: _import('404'),
-        meta: {
-          title: 'NotFound',
-          noCache: true,
-          noTag: true
-        },
-        hidden: true,
-        apis: ['*']
-      }]
+        path: 'dashboard',
+        component: () => import('@/views/dashboard/index.vue'),
+        name: 'Dashboard',
+        meta: { title: '仪表板', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login/index.vue'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404/index.vue'),
+    hidden: true
+  },
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
   }
-];
+]
 
-const createRouter = (routes) => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: routes
-});
+const router = new VueRouter({
+  mode: 'history',
+  base: import.meta.env.BASE_URL,
+  routes
+})
 
-const router = createRouter(initRoutes);
-
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter(routes) {
-  const newRouter = createRouter(routes);
-  router.matcher = newRouter.matcher; // reset router
-}
-
-export const AFFIX_ROUTES = affixRoutes;
-export const APPEND_ROUTES = appendRoutes;
-export const genComponent = _import;
-
-export default router;
+export default router
