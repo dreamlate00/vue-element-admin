@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import path from 'path';
+  import path from 'path-browserify'
   import Item from './Item';
   import AppLink from './Link';
   import FixiOSBug from './FixiOSBug';

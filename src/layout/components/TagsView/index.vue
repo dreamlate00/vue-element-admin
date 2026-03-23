@@ -20,7 +20,7 @@
 
 <script>
   import ScrollPane from './ScrollPane';
-  import path from 'path';
+  import path from 'path-browserify'
 
   export default {
     components: {

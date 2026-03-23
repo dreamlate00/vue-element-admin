@@ -57,7 +57,9 @@
         this.$store.dispatch('app/toggleSideBar');
       }
     },
-    mounted() {}
+    mounted() {
+      console.dir(this.permission_routes);
+    }
   };
 
 </script>

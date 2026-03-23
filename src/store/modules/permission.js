@@ -1,5 +1,5 @@
 import { asyncRoutes, constantRoutes } from '@/router'
-
+import { AFFIX_ROUTES, APPEND_ROUTES } from '@src/router';
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
@@ -36,7 +36,8 @@ export function filterAsyncRoutes(routes, roles) {
 
 const state = {
   routes: [],
-  addRoutes: []
+  addRoutes: [],
+  routeApis: {}
 }
 
 const mutations = {
@@ -47,19 +48,41 @@ const mutations = {
 }
 
 const actions = {
-  generateRoutes({ commit }, roles) {
+  generateRoutes({ commit }, routes) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
-    })
+      let accessedRoutes = filterAsyncRoutes(AFFIX_ROUTES.concat(routes).concat(APPEND_ROUTES));
+      commit('SET_ROUTES', routes);
+      genRouteApis(accessedRoutes);
+      resolve(accessedRoutes);
+    });
+  }
+};
+
+function genRouteApis(list) {
+  for (let i in list) {
+    var data = list[i];
+    if (data.children) {
+      genRouteApis(data.children);
+    }
+    state.routeApis[data.name] = data.apis || [];
   }
 }
+
+// const actions = {
+//   generateRoutes({ commit }, roles) {
+//     console.log(roles)
+//     return new Promise(resolve => {
+//       let accessedRoutes
+//       if (roles.includes('admin')) {
+//         accessedRoutes = asyncRoutes || []
+//       } else {
+//         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+//       }
+//       commit('SET_ROUTES', accessedRoutes)
+//       resolve(accessedRoutes)
+//     })
+//   }
+// }
 
 export default {
   namespaced: true,
