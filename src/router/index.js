@@ -453,8 +453,9 @@ const router = createRouter(constantRoutes);
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter(routes) {
-  const newRouter = createRouter(routes);
-  router.matcher = newRouter.matcher; // reset router
+  // const newRouter = createRouter(routes);
+  // router.matcher = newRouter.matcher; // reset router
+  router.addRoutes(routes)
 }
 
 

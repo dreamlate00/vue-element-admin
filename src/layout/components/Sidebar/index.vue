@@ -58,7 +58,7 @@
       }
     },
     mounted() {
-      console.dir(this.permission_routes);
+      // console.dir(this.permission_routes);
     }
   };
 
