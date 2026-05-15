@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import clipboard from '@/utils/clipboard'
+// import clipboard from '@/utils/clipboard'
 import svgIcons from './svg-icons'
 import elementIcons from './element-icons'
 
@@ -60,13 +60,13 @@ export default {
       return `<i class="el-icon-${symbol}" />`
     },
     handleClipboard(text, event) {
-      clipboard(text, event)
+      // clipboard(text, event)
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .icons-container {
   margin: 10px 20px 0;
   overflow: hidden;

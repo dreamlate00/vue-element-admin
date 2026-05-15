@@ -20,7 +20,8 @@
 
 <script>
   import ScrollPane from './ScrollPane';
-  import path from 'path-browserify'
+  // import path from 'path-browserify-esm'
+
 
   export default {
     components: {
@@ -37,7 +38,7 @@
     },
     computed: {
       visitedViews() {
-        return this.$store.state.tagsView.visitedViews;
+        return this.$store.state.tagsView.visitedViews || [];
       },
       routes() {
         return this.$store.state.permission.routes;
@@ -72,7 +73,11 @@
         let tags = [];
         routes.forEach(route => {
           if (route.meta && route.meta.affix) {
-            const tagPath = path.resolve(basePath, route.path);
+            
+            let basePath = this.basePath
+            let tpath = `${basePath}/${route.path}`
+            tpath = tpath.replace(/\/+/g, '/')
+            const tagPath = tpath
             tags.push({
               fullPath: tagPath,
               path: tagPath,
@@ -100,6 +105,7 @@
         }
       },
       addTags() {
+        console.info(this.$route);
         const {
           name
         } = this.$route;

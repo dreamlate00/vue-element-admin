@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  // import logo from '@src/static/image/gdrc_logo.png';
+  import logo from '@/assets/image/gdrc_logo.png';
   export default {
     name: 'SidebarLogo',
     props: {
@@ -27,7 +27,8 @@
     data() {
       return {
         // title: 'Vue Element Admin',
-        logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+        // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+        logo
       };
     }
   };

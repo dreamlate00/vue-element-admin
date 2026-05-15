@@ -20,7 +20,7 @@
     },
     watch: {
       theme(val, oldVal) {
-        console.log(val, oldVal);
+        // console.log(val, oldVal);
         if (typeof val !== 'string') return;
         this.$store.dispatch('app/setTheme', val);
         const themeCluster = this.getThemeCluster(val.replace('#', ''));

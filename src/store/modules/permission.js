@@ -1,5 +1,5 @@
 import { asyncRoutes, constantRoutes } from '@/router'
-import { AFFIX_ROUTES, APPEND_ROUTES } from '@src/router';
+import { AFFIX_ROUTES, APPEND_ROUTES,layout, GetComponent } from '@src/router';
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
@@ -19,19 +19,30 @@ function hasPermission(roles, route) {
  * @param roles
  */
 export function filterAsyncRoutes(routes, roles) {
-  const res = []
+  const res = [];
 
+  // 解析菜单
+  // 没有子级，也没有配置权限的菜单都不加载
   routes.forEach(route => {
-    const tmp = { ...route }
-    if (hasPermission(roles, tmp)) {
-      if (tmp.children) {
-        tmp.children = filterAsyncRoutes(tmp.children, roles)
-      }
-      res.push(tmp)
+    const tmp = { ...route };
+    if (tmp.children) {
+      tmp.children = filterAsyncRoutes(tmp.children);
     }
-  })
+    if (typeof tmp.component === 'string') {
+      if (tmp.component === 'layout') {
+        tmp.component = layout;
+      } else {
+        tmp.component = GetComponent(tmp.component);
+        // const componentPath = tmp.component.replace(/^(\/\w+)$/, '$1/index')
+        // const path = '@/views/'+componentPath+'.vue'
+        // tmp.component = () => import(path)
+      }
+    }
 
-  return res
+    res.push(tmp);
+  });
+  return res;
+
 }
 
 const state = {

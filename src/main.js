@@ -9,6 +9,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './styles/index.less'
 import GRUI from '../grui';
+import './icons';
 
 import directives from '@/directives';
 import filters from '@/filters';
@@ -55,6 +56,9 @@ Vue.prototype.haveApiRight = haveApiRight;
 let whiteList = ['login'];
 
 router.beforeEach(async (to, from, next) => {
+  
+  // console.log(to);
+
   if (whiteList.indexOf(to.name) > -1) {
     store.dispatch('app/setLayoutLoadig', false);
     next();

@@ -41,9 +41,16 @@ const router = new VueRouter({
   routes
 })
 
-export function resetRouter() {
-  const newRouter = createRouter();
-  router.matcher = newRouter.matcher; // reset router
+const createRouter = (routes) => new Router({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: routes
+});
+
+export function resetRouter(routes) {
+  // const newRouter = createRouter(routes);
+  // router.matcher = newRouter.matcher; // reset router
+  router.addRoutes(accessRoutes)
 }
 
 export default router

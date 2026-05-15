@@ -23,7 +23,8 @@ export default defineFakeRoute([
       return {
         code: '200',
         roles: [],
-        info: [{
+        info: [
+          {
           path: '/sysconfig',
           component: 'layout',
           name: 'sysconfig',
@@ -69,6 +70,14 @@ export default defineFakeRoute([
             name: 'menu',
             meta: {
               title: '菜单管理'
+            }
+          },
+          {
+            path: '/routes',
+            component: 'sysconfig/routes',
+            name: 'routes',
+            meta: {
+              title: '路由管理'
             }
           }
           ]

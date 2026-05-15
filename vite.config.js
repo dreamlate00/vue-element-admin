@@ -10,14 +10,14 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import path from 'path';
 
 export default defineConfig((command,mode ) => {
-  console.log('command',command)
-  console.log('mode',mode)
+  // console.log('command',command)
+  // console.log('mode',mode)
   return {
     plugins: [
     vue()
     ,vueJsx(),
     createSvgIconsPlugin({
-        iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+        iconDirs: [path.resolve(process.cwd(), 'src/icons/svg')],
         symbolId: 'icon-[name]',
       }),
     ,createMyMock({
