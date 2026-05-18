@@ -56,11 +56,15 @@ Vue.prototype.haveApiRight = haveApiRight;
 let whiteList = ['login'];
 
 router.beforeEach(async (to, from, next) => {
+
+  console.info(to)
+
   if (whiteList.indexOf(to.name) > -1) {
     store.dispatch('app/setLayoutLoadig', false);
     next();
     return;
   }
+
   if (store.state.permission.routes.length === 0) {
     store.dispatch('app/setLayoutLoadig', true);
     let menus = await getRoutes();
@@ -69,8 +73,11 @@ router.beforeEach(async (to, from, next) => {
         resolve();
       }, 2000);
     });
+
     let accessRoutes = await store.dispatch('permission/generateRoutes', menus["info"]);
+    
     resetRouter(accessRoutes);
+
     store.dispatch('app/setLayoutLoadig', false);
 
     next({...to,replace: true});

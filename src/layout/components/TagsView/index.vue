@@ -105,7 +105,7 @@
         }
       },
       addTags() {
-        console.info(this.$route);
+        // console.info(this.$route);
         const {
           name
         } = this.$route;

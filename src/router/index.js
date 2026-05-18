@@ -438,9 +438,37 @@ export const asyncRoutes = [
   //     },
   //   ],
   // },
-
+  {
+    path: '/auth',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/forbbiden',
+        name: 'forbbiden',
+        component: () => import('@/views/error-page/403.vue'),
+        meta: {
+          title: 'Forbidden',
+          noCache: true,
+          noTag: true
+        },
+        hidden: true,
+        apis: ['*']
+      }, {
+        path: '/*',
+        name: 'notfound',
+        component: () => import('@/views/error-page/404.vue'),
+        meta: {
+          title: 'NotFound',
+          noCache: true,
+          noTag: true
+        },
+        hidden: true,
+        apis: ['*']
+      }]
+  },
   // // 404 page must be placed at the end !!!
-  // { path: '*', redirect: '/404', hidden: true },
+  { path: '*', redirect: '/404', hidden: true },
 ];
 
 const createRouter = (routes) => new Router({
@@ -453,6 +481,7 @@ const router = createRouter(constantRoutes);
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter(routes) {
+  console.dir(routes)
   // const newRouter = createRouter(routes);
   // router.matcher = newRouter.matcher; // reset router
   router.addRoutes(routes)
